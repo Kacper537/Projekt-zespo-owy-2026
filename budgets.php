@@ -39,7 +39,8 @@ $categories = ['Jedzenie', 'Transport', 'Rachunki', 'Rozrywka', 'Studia', 'Inne'
 <body class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
-        <a class="navbar-brand" href="dashboard.php">Twój portfel (Witaj, <?= htmlspecialchars($_SESSION['username']) ?>)</a>
+        <a class="navbar-brand" href="dashboard.php"><img src="logo.png" alt="Logo" width="40" height="40" class="me-2">
+    Twój portfel (Witaj, <?= htmlspecialchars($_SESSION['username']) ?>)</a>
         <div class="navbar-nav">
             <a class="nav-link" href="dashboard.php">Panel główny</a>
             <a class="nav-link" href="expenses.php">Wydatki</a>

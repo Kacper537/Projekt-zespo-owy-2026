@@ -163,7 +163,8 @@ $history = $stmt->fetchAll();
 <div class="container">
 
 <a class="navbar-brand" href="dashboard.php">
-Twój portfel (<?= htmlspecialchars($_SESSION['username']) ?>)
+ <img src="logo.png" alt="Logo" width="40" height="40" class="me-2">
+    Twój portfel (Witaj, <?= htmlspecialchars($_SESSION['username']) ?>)
 </a>
 
 <div class="navbar-nav">
@@ -198,115 +199,139 @@ onchange="this.form.submit()">
 </div>
 </form>
 
-<!-- BILANS -->
-<div class="row">
+<!-- BILANS + BUDŻETY -->
+<div class="row g-3">
 
-<div class="col-md-4">
-<div class="card <?= $balance >= 0 ? 'bg-success' : 'bg-danger' ?> text-white p-4 text-center">
+    <div class="col-lg-6 col-md-12">
+         <div class="card <?= $balance >= 0 ? 'bg-success' : 'bg-danger' ?> text-white text-center h-100" style="padding: 1rem; display: flex; flex-direction: column; justify-content: center;">
+            <h1>BILANS MIESIĄCA</h1>
 
-<h1>BILANS MIESIĄCA</h1>
-<h2><?= number_format($balance, 2, ',', ' ') ?> zł</h2>
+            <h2><?= number_format($balance, 2, ',', ' ') ?> zł</h2>
 
-<p>Przychody: <?= number_format($totalIncome, 2, ',', ' ') ?> zł</p>
-<p>Wydatki: <?= number_format($totalMonth, 2, ',', ' ') ?> zł</p>
+            <p>
+                Przychody:
+                <strong><?= number_format($totalIncome, 2, ',', ' ') ?> zł</strong>
+            </p>
 
-</div>
-</div>
+            <p>
+                Wydatki:
+                <strong><?= number_format($totalMonth, 2, ',', ' ') ?> zł</strong>
+            </p>
+        </div>
+    </div>
 
-<!-- BUDŻETY -->
-<div class="col-md-8">
-<div class="card p-3">
+    <div class="col-lg-6 col-md-12">
+        <div class="card p-3 h-100">
 
-<h5>Budżety</h5>
+            <h5>Budżety</h5>
 
-<?php foreach ($budgets as $b):
+            <?php foreach ($budgets as $b):
 
-$pct = $b['amount_limit'] > 0
-? ($b['current_spent'] / $b['amount_limit']) * 100
-: 0;
+            $pct = $b['amount_limit'] > 0
+                ? ($b['current_spent'] / $b['amount_limit']) * 100
+                : 0;
 
-$color = $pct > 100 ? 'bg-danger' : ($pct > 80 ? 'bg-warning' : 'bg-success');
-?>
+            $color = $pct > 100
+                ? 'bg-danger'
+                : ($pct > 80 ? 'bg-warning' : 'bg-success');
+            ?>
 
-<div class="mb-2">
+            <div class="mb-2">
 
-<small>
-<?= htmlspecialchars($b['category']) . ' ' ?>
-(<?= $b['current_spent'] ?> / <?= $b['amount_limit'] ?> zł)
-</small>
+                <small>
+                    <?= htmlspecialchars($b['category']) ?>
+                    (<?= $b['current_spent'] ?> / <?= $b['amount_limit'] ?> zł)
+                </small>
 
-<div class="progress">
-<div class="progress-bar <?= $color ?>"
-style="width: <?= min($pct, 100) ?>%">
-<?= round($pct) ?>%
-</div>
-</div>
+                <div class="progress" style="height:20px;">
+                    <div class="progress-bar <?= $color ?>"
+                         style="width: <?= min($pct,100) ?>%">
+                        <?= round($pct) ?>%
+                    </div>
+                </div>
 
-</div>
+            </div>
 
-<?php endforeach; ?>
+            <?php endforeach; ?>
 
-</div>
-</div>
-
-</div>
-
-<!-- HISTORIA -->
-<div class="row mt-4">
-
-<div class="col-md-6">
-
-<div class="card p-3">
-<h5>Historia</h5>
-
-<table class="table">
-
-<?php foreach ($history as $h): ?>
-
-<tr>
-<td><?= $h['date'] ?></td>
-
-<td>
-<?php if ($h['type'] === 'income'): ?>
-<span class="badge bg-success fs-4 fw-bold">+</span>
-<?php else: ?>
-<span class="badge bg-danger fs-4 fw-bold">-</span>
-<?php endif; ?>
-</td>
-
-<td><?= htmlspecialchars($h['name']) ?></td>
-
-<td><?= number_format($h['amount'], 2, ',', ' ') ?> zł</td>
-</tr>
-
-<?php endforeach; ?>
-
-</table>
+        </div>
+    </div>
 
 </div>
 
+<!-- HISTORIA + WYKRESY -->
+<div class="row g-3 mt-2">
+
+    <div class="col-lg-6 col-md-12">
+
+        <div class="card p-3 h-100">
+
+            <h5>Historia</h5>
+
+            <div style="max-height:350px; overflow-y:auto;">
+
+                <table class="table table-sm">
+
+                    <?php foreach ($history as $h): ?>
+
+                    <tr>
+
+                        <td><?= $h['date'] ?></td>
+
+                        <td>
+                            <?php if ($h['type'] === 'income'): ?>
+                                <span class="badge bg-success">+</span>
+                            <?php else: ?>
+                                <span class="badge bg-danger">-</span>
+                            <?php endif; ?>
+                        </td>
+
+                        <td><?= htmlspecialchars($h['name']) ?></td>
+
+                        <td><?= number_format($h['amount'], 2, ',', ' ') ?> zł</td>
+
+                    </tr>
+
+                    <?php endforeach; ?>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-6 col-md-12">
+
+        <div class="card p-3 h-100 text-center">
+
+            <h5>Wydatki</h5>
+
+            <div style="height:300px;">
+                <canvas id="expenseChart"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-6 col-md-12">
+
+        <div class="card p-3 h-100 text-center">
+
+            <h5>Przychody</h5>
+
+            <div style="height:300px;">
+                <canvas id="incomeChart"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
-<!-- WYKRESY -->
-<div class="col-md-6">
-
-<div class="card p-3 align-items-center">
-
-<h5>Wydatki</h5>
-<div style="width: 300px; height: 300px;">
-<canvas id="expenseChart"></canvas>
-</div>
-
-<hr>
-
-<h5>Przychody</h5>
-<div style="width: 300px; height: 300px;">
-<canvas id="incomeChart"></canvas>
-</div>
-
-</div>
-
-</div>
 
 </div>
 

@@ -142,7 +142,8 @@ $incomes = $stmt->fetchAll();
     <div class="container">
 
         <a class="navbar-brand" href="dashboard.php">
-            Twój portfel (Witaj, <?= htmlspecialchars($_SESSION['username']) ?>)
+           <img src="logo.png" alt="Logo" width="40" height="40" class="me-2">
+    Twój portfel (Witaj, <?= htmlspecialchars($_SESSION['username']) ?>)
         </a>
 
         <div class="navbar-nav">
