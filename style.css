@@ -38,6 +38,21 @@ color: #ffffff !important;
 transform: translateY(-1px);
 }
 
+/* Distinct logout link styling */
+.logout-link {
+    color: #10b981 !important; /* match success/positive color */
+    font-weight: 700;
+    margin-left: 8px;
+}
+.logout-link:hover,
+.logout-link:focus {
+    color: #059669 !important; /* slightly darker on hover */
+    text-decoration: underline;
+}
+.dark-theme .logout-link {
+    color: #10b981 !important; /* keep same color in dark theme */
+}
+
 /* =========================
 CARDS
 ========================= */
@@ -258,6 +273,109 @@ UTILITIES
 color: #64748b !important;
 }
 
+/* =========================
+   DARK THEME
+   ======================== */
+
+.dark-theme {
+    background: linear-gradient(135deg, #071020, #0b1220) !important;
+    color: #e6eef8;
+}
+
+.dark-theme .navbar {
+    background: linear-gradient(90deg, #07101a, #0b1526) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
+.dark-theme .navbar-brand,
+.dark-theme .nav-link {
+    color: rgba(255,255,255,0.95) !important;
+}
+
+/* Keep logout link green even when other nav links are forced white in dark theme */
+.dark-theme .navbar .nav-link.logout-link {
+    color: #10b981 !important;
+}
+.dark-theme .navbar .nav-link.logout-link:hover,
+.dark-theme .navbar .nav-link.logout-link:focus {
+    color: #059669 !important;
+}
+
+.dark-theme .card {
+    background: #0f1724;
+    color: #e6eef8;
+    box-shadow: 0 12px 30px rgba(2,6,23,0.6);
+}
+
+.dark-theme .card h4,
+.dark-theme .card h5 {
+    color: #ffffff;
+}
+
+.dark-theme .btn-light {
+    background: #111827;
+    color: #e6eef8;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.dark-theme .btn-outline-light {
+    color: #e6eef8;
+    border-color: rgba(255,255,255,0.12);
+}
+
+.dark-theme .text-muted {
+    color: #94a3b8 !important;
+}
+
+/* Ensure theme-toggle button keeps readable colors and hover states */
+#theme-toggle {
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+/* Dark theme: keep outline button subtle and preserve text color on hover */
+.dark-theme #theme-toggle,
+.dark-theme .btn-outline-light#theme-toggle {
+    color: #e6eef8 !important;
+    background-color: transparent !important;
+    border-color: rgba(255,255,255,0.12) !important;
+}
+
+.dark-theme #theme-toggle:hover,
+.dark-theme #theme-toggle:focus,
+.dark-theme .btn-outline-light#theme-toggle:hover {
+    background-color: rgba(255,255,255,0.06) !important;
+    color: #e6eef8 !important;
+}
+
+/* Light theme: ensure button text contrasts on light hero backgrounds */
+#theme-toggle {
+    color: inherit !important;
+}
+
+/* Light-theme specific: make toggle clearly visible on light backgrounds */
+body:not(.dark-theme) #theme-toggle,
+body:not(.dark-theme) .btn-outline-light#theme-toggle {
+    color: #0f172a !important;
+    background-color: rgba(255,255,255,0.9) !important;
+    border-color: rgba(15,23,42,0.08) !important;
+}
+
+body:not(.dark-theme) #theme-toggle:hover,
+body:not(.dark-theme) #theme-toggle:focus {
+    /* keep same appearance on hover in light mode (no visual change) */
+    background-color: rgba(255,255,255,0.9) !important;
+    color: #0f172a !important;
+    border-color: rgba(15,23,42,0.08) !important;
+}
+
+body {
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.card, .navbar, .btn {
+    transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
 .shadow-sm {
 box-shadow: 0 8px 20px rgba(15,23,42,0.06) !important;
 }
@@ -272,22 +390,17 @@ opacity: 0;
 transform: translateY(12px);
 }
 
-```
 to {
     opacity: 1;
     transform: translateY(0);
 }
-```
 
 }
-
 /* =========================
 RESPONSIVE
 ========================= */
 
 @media (max-width: 768px) {
-
-```
 .navbar-nav {
     margin-top: 10px;
 }
@@ -310,4 +423,5 @@ RESPONSIVE
 
 canvas {
     max-height: 300px;
+}
 }
