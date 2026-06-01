@@ -159,24 +159,7 @@ $history = $stmt->fetchAll();
 
 <body class="bg-light">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-<div class="container">
-
-<a class="navbar-brand" href="dashboard.php">
- <img src="logo.png" alt="Logo" width="40" height="40" class="me-2">
-    Twój portfel (Witaj, <?= htmlspecialchars($_SESSION['username']) ?>)
-</a>
-
-<div class="navbar-nav">
-<a class="nav-link active" href="dashboard.php">Panel główny</a>
-<a class="nav-link" href="expenses.php">Wydatki</a>
-<a class="nav-link" href="income.php">Przychody</a>
-<a class="nav-link" href="budgets.php">Budżety</a>
-<a class="nav-link text-danger" href="logout.php">Wyloguj</a>
-</div>
-
-</div>
-</nav>
+<?php $activePage = 'dashboard'; include 'header.php'; ?>
 
 <div class="container">
 
