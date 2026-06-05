@@ -111,7 +111,7 @@ if (isset($_GET['edit'])) {
 $isEditing = !empty($incomeToEdit);
 
 /* =========================
-   LISTA (ZMIANA: Dodano filtrowanie po miesiącu z zachowaniem struktury)
+   LISTA
 ========================= */
 $filter_month = $_GET['month'] ?? '';
 
@@ -135,10 +135,7 @@ $incomes = $stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <title>Przychody</title>
-
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -147,77 +144,50 @@ $incomes = $stmt->fetchAll();
 <?php $activePage = 'income'; include 'header.php'; ?>
 
 <div class="container">
-
 <div class="row">
 
     <div class="col-md-4 mb-4">
-
-        <div class="card p-4 shadow-sm">
-
-            <h5>
-                <?= $isEditing ? 'Edytuj przychód' : 'Dodaj przychód' ?>
-            </h5>
+        <div class="card p-3 shadow-sm">
+            <h5><?= $isEditing ? 'Edytuj przychód' : 'Dodaj wydatek' /* Ujednolicony nagłówek lub tekst */ ?></h5>
 
             <form method="POST">
-
                 <?php if ($isEditing): ?>
                     <input type="hidden" name="update_income" value="1">
                     <input type="hidden" name="income_id" value="<?= $incomeToEdit['id'] ?>">
                 <?php else: ?>
                     <input type="hidden" name="add_income" value="1">
+                    <input type="hidden" name="income_id" value="">
                 <?php endif; ?>
 
-                <div class="mb-3">
+                <div class="mb-2">
                     <label class="form-label">Kwota (zł)</label>
-                    <input type="number"
-                           step="0.01"
-                           name="amount"
-                           class="form-control"
-                           value="<?= $isEditing ? $incomeToEdit['amount'] : '' ?>"
-                           required>
+                    <input type="number" step="0.01" name="amount" class="form-control" value="<?= $isEditing ? $incomeToEdit['amount'] : '' ?>" required>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-2">
                     <label class="form-label">Źródło</label>
-                    <input type="text"
-                           name="source"
-                           class="form-control"
-                           placeholder="np. Pensja, Freelance, Sprzedaż..."
-                           value="<?= $isEditing ? htmlspecialchars($incomeToEdit['source']) : '' ?>"
-                           required>
+                    <input type="text" name="source" class="form-control" placeholder="np. Pensja, Freelance, Sprzedaż..." value="<?= $isEditing ? htmlspecialchars($incomeToEdit['source']) : '' ?>" required>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-2">
                     <label class="form-label">Data</label>
-                    <input type="date"
-                           name="date"
-                           class="form-control"
-                           value="<?= $isEditing ? $incomeToEdit['date'] : date('Y-m-d') ?>"
-                           required>
+                    <input type="date" name="date" class="form-control" value="<?= $isEditing ? $incomeToEdit['date'] : date('Y-m-d') ?>" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Opis</label>
-                    <textarea name="description" class="form-control"><?= $isEditing ? htmlspecialchars($incomeToEdit['description']) : '' ?></textarea>
+                    <input type="text" name="description" class="form-control" value="<?= $isEditing ? htmlspecialchars($incomeToEdit['description']) : '' ?>">
                 </div>
 
-                <button class="btn btn-success w-100">
-                    <?= $isEditing ? 'Zapisz zmiany' : 'Dodaj przychód' ?>
-                </button>
-
+                <button class="btn btn-success w-100"><?= $isEditing ? 'Zapisz zmiany' : 'Dodaj' ?></button>
             </form>
-
         </div>
-
     </div>
 
     <div class="col-md-8">
-
         <div class="card p-3 shadow-sm mb-3">
             <form method="GET" class="row g-2 align-items-center">
-                <div class="col-auto">
-                    <h6>Filtr:</h6>
-                </div>
+                <div class="col-auto"><h6>Filtr:</h6></div>
                 <div class="col-auto">
                     <input type="month" name="month" class="form-control" value="<?= htmlspecialchars($filter_month) ?>">
                 </div>
@@ -232,77 +202,68 @@ $incomes = $stmt->fetchAll();
             </form>
         </div>
 
-        <div class="card p-4 shadow-sm">
-
+        <div class="card p-3 shadow-sm">
             <h5>Historia przychodów</h5>
 
-            <table class="table table-striped table-fixed-layout">
-                <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Żródło</th>
-                    <th>Kwota</th>
-                    <th>Opis</th>
-                    <th>Akcja</th>
-                </tr>
-                </thead>
-                <tbody>
-
-                <?php foreach ($incomes as $i): ?>
-                    <tr>
-                        <td><?= $i['date'] ?></td>
-
-                        <td class="col-fixed-category">
-                            <div class="table-cell-container">
-                                <?php if (shortenCategory($i['source']) !== htmlspecialchars($i['source'])): ?>
-                                    <span id="inc_cat_short_<?= $i['id'] ?>" class="badge bg-success" style="cursor: pointer;" 
-                                        onclick="document.getElementById('inc_cat_short_<?= $i['id'] ?>').style.display='none'; document.getElementById('inc_cat_full_<?= $i['id'] ?>').style.display='inline-block';" 
-                                        title="Kliknij, aby zobaczyć całość">
-                                        <?= shortenCategory($i['source']) ?>
-                                    </span>
-                                    <span id="inc_cat_full_<?= $i['id'] ?>" class="badge bg-success" style="cursor: pointer; display: none; white-space: normal; word-break: break-word;" 
-                                        onclick="document.getElementById('inc_cat_full_<?= $i['id'] ?>').style.display='none'; document.getElementById('inc_cat_short_<?= $i['id'] ?>').style.display='inline-block';" 
-                                        title="Kliknij, aby schować">
-                                        <?= htmlspecialchars($i['source']) ?>
-                                    </span>
-                                <?php else: ?>
-                                    <span class="badge bg-success"><?= htmlspecialchars($i['source']) ?></span>
-                                <?php endif; ?>
-                            </div>
-                        </td>
-
-                        
-
-                        <td>
-                            <strong class="text-success">
-                                +<?= number_format($i['amount'], 2, ',', ' ') ?> zł
-                            </strong>
-                        </td>
-
-                        <td>
-                            <div class="table-cell-container">
-                                <div id="inc_desc_<?= $i['id'] ?>" class="clamp-description"><?= htmlspecialchars($i['description']) ?></div>
-                                <span id="inc_btn_<?= $i['id'] ?>" class="toggle-text-btn" style="display: none;" onclick="toggleText(<?= $i['id'] ?>, 'inc')">... pokaż więcej</span>
-                            </div>
-                        </td>
-
-                        <td>
-                            <a href="income.php?edit=<?= $i['id'] ?>" class="btn btn-warning btn-sm">Edytuj</a>
-                            <a href="income.php?delete=<?= $i['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Usunąć?')">Usuń</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-
-                <?php if (empty($incomes)): ?>
-                    <tr>
-                        <td colspan="5" class="text-muted text-center">Brak przychodów spełniających kryteria.</td>
-                    </tr>
-                <?php endif; ?>
-
-                </tbody>
-
-
-            </table>
+            <div class="table-responsive">
+                <table class="table table-striped table-fixed-layout w-auto" style="min-width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Kategoria</th> <th>Kwota</th>
+                            <th style="min-width: 300px;">Opis</th>
+                            <th>Akcja</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($incomes as $i): ?>
+                        <tr>
+                            <td><?= $i['date'] ?></td>
+                            <td class="col-fixed-category">
+                                <div class="table-cell-container">
+                                    <?php if (shortenCategory($i['source']) !== htmlspecialchars($i['source'])): ?>
+                                        <span id="inc_cat_short_<?= $i['id'] ?>" class="badge bg-success" style="cursor: pointer;" 
+                                            onclick="document.getElementById('inc_cat_short_<?= $i['id'] ?>').style.display='none'; document.getElementById('inc_cat_full_<?= $i['id'] ?>').style.display='inline-block';" 
+                                            title="Kliknij, aby zobaczyć całość">
+                                            <?= shortenCategory($i['source']) ?>
+                                        </span>
+                                        <span id="inc_cat_full_<?= $i['id'] ?>" class="badge bg-success" style="cursor: pointer; display: none; white-space: normal; word-break: break-word;" 
+                                            onclick="document.getElementById('inc_cat_full_<?= $i['id'] ?>').style.display='none'; document.getElementById('inc_cat_short_<?= $i['id'] ?>').style.display='inline-block';" 
+                                            title="Kliknij, aby schować">
+                                            <?= htmlspecialchars($i['source']) ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="badge bg-success"><?= htmlspecialchars($i['source']) ?></span>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                            <td>
+                                <strong class="text-success">+<?= number_format($i['amount'], 2, ',', ' ') ?> zł</strong>
+                            </td>
+                            <td>
+                                <div class="table-cell-container">
+                                    <div id="inc_desc_<?= $i['id'] ?>" class="clamp-description"><?= htmlspecialchars($i['description']) ?></div>
+                                    
+                                    <span id="inc_btn_<?= $i['id'] ?>" class="toggle-text-btn" style="display: none;" onclick="toggleText(<?= $i['id'] ?>, 'inc')">pokaż więcej</span>
+                                </div>
+                            </td>
+                            <td class="text-nowrap">
+                                <div class="d-flex gap-1">
+                                    <a href="income.php?edit=<?= $i['id'] ?>" class="btn btn-warning btn-sm">Edytuj</a>
+                                    <a href="income.php?delete=<?= $i['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Usunąć?')">Usuń</a>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    <?php if (empty($incomes)): ?>
+                        <tr>
+                            <td colspan="5" class="text-muted text-center">Brak przychodów spełniających kryteria.</td>
+                        </tr>
+                    <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+            
             <script>
             function toggleText(id, prefix) {
                 var textEl = document.getElementById(prefix + '_desc_' + id);
@@ -313,12 +274,11 @@ $incomes = $stmt->fetchAll();
                     btnEl.innerText = '... pokaż więcej';
                 } else {
                     textEl.classList.add('text-fully-expanded');
-                    btnEl.innerText = 'pokaż mniej';
+                    btnEl.innerText = ' (pokaż mniej)';
                 }
             }
 
             document.addEventListener("DOMContentLoaded", function() {
-                // Automatyczne pokazywanie przycisku "... pokaż więcej" tylko dla długich opisów
                 <?php foreach ($incomes as $i): ?>
                 (function() {
                     var textEl = document.getElementById('inc_desc_<?= $i['id'] ?>');
@@ -330,14 +290,10 @@ $incomes = $stmt->fetchAll();
                 <?php endforeach; ?>
             });
             </script>
-
-
         </div>
-
     </div>
 
 </div>
-
 </div>
 
 </body>

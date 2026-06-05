@@ -210,7 +210,7 @@ onchange="this.form.submit()">
 
     <div class="col-lg-6 col-md-12">
          <div class="card <?= $balance >= 0 ? 'bg-success' : 'bg-danger' ?> text-white text-center h-100" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; shadow-sm">
-            <h4 class="mb-1 opacity-75">BILANS MIESIĄCA</h4>
+            <h2 class="mb-1 opacity-75">BILANS MIESIĄCA</h2>
             <h2 class="fw-bold mb-3"><?= number_format($balance, 2, ',', ' ') ?> zł</h2>
             <div class="d-flex justify-content-around border-top pt-2 opacity-90">
                 <span>Przychody: <strong><?= number_format($totalIncome, 2, ',', ' ') ?> zł</strong></span>
@@ -221,7 +221,7 @@ onchange="this.form.submit()">
 
     <div class="col-lg-6 col-md-12">
          <div class="card <?= $yearBalance >= 0 ? 'bg-success' : 'bg-danger' ?> text-white text-center h-100" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; shadow-sm">
-            <h4 class="mb-1 opacity-75">BILANS ROKU (<?= htmlspecialchars($selectedYear) ?>)</h4>
+            <h2 class="mb-1 opacity-75">BILANS ROKU (<?= htmlspecialchars($selectedYear) ?>)</h2>
             <h2 class="fw-bold mb-3"><?= number_format($yearBalance, 2, ',', ' ') ?> zł</h2>
             <div class="d-flex justify-content-around border-top pt-2 opacity-90">
                 <span>Przychody: <strong><?= number_format($totalYearIncome, 2, ',', ' ') ?> zł</strong></span>
