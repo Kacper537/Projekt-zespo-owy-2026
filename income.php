@@ -111,16 +111,22 @@ if (isset($_GET['edit'])) {
 $isEditing = !empty($incomeToEdit);
 
 /* =========================
-   LISTA
+   LISTA (ZMIANA: Dodano filtrowanie po miesiącu z zachowaniem struktury)
 ========================= */
-$stmt = $db->prepare("
-    SELECT *
-    FROM incomes
-    WHERE user_id = ?
-    ORDER BY date DESC, id DESC
-");
+$filter_month = $_GET['month'] ?? '';
 
-$stmt->execute([$user_id]);
+$query = "SELECT * FROM incomes WHERE user_id = ?";
+$params = [$user_id];
+
+if (!empty($filter_month)) {
+    $query .= " AND date LIKE ?";
+    $params[] = $filter_month . '%';
+}
+
+$query .= " ORDER BY date DESC, id DESC";
+
+$stmt = $db->prepare($query);
+$stmt->execute($params);
 $incomes = $stmt->fetchAll();
 ?>
 
@@ -144,7 +150,6 @@ $incomes = $stmt->fetchAll();
 
 <div class="row">
 
-    <!-- FORM -->
     <div class="col-md-4 mb-4">
 
         <div class="card p-4 shadow-sm">
@@ -193,8 +198,7 @@ $incomes = $stmt->fetchAll();
 
                 <div class="mb-3">
                     <label class="form-label">Opis</label>
-                    <textarea name="description"
-                              class="form-control"><?= $isEditing ? htmlspecialchars($incomeToEdit['description']) : '' ?></textarea>
+                    <textarea name="description" class="form-control"><?= $isEditing ? htmlspecialchars($incomeToEdit['description']) : '' ?></textarea>
                 </div>
 
                 <button class="btn btn-success w-100">
@@ -207,36 +211,67 @@ $incomes = $stmt->fetchAll();
 
     </div>
 
-    <!-- TABLE -->
     <div class="col-md-8">
+
+        <div class="card p-3 shadow-sm mb-3">
+            <form method="GET" class="row g-2 align-items-center">
+                <div class="col-auto">
+                    <h6>Filtr:</h6>
+                </div>
+                <div class="col-auto">
+                    <input type="month" name="month" class="form-control" value="<?= htmlspecialchars($filter_month) ?>">
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-secondary btn-sm">Filtruj</button>
+                </div>
+                <?php if (!empty($filter_month)): ?>
+                    <div class="col-auto">
+                        <a href="income.php" class="btn btn-outline-danger btn-sm">Wszystkie</a>
+                    </div>
+                <?php endif; ?>
+            </form>
+        </div>
 
         <div class="card p-4 shadow-sm">
 
             <h5>Historia przychodów</h5>
 
-            <table class="table table-striped">
-
+            <table class="table table-striped table-fixed-layout">
                 <thead>
                 <tr>
                     <th>Data</th>
-                    <th>Źródło</th>
+                    <th>Żródło</th>
                     <th>Kwota</th>
                     <th>Opis</th>
                     <th>Akcja</th>
                 </tr>
                 </thead>
-
                 <tbody>
 
                 <?php foreach ($incomes as $i): ?>
                     <tr>
                         <td><?= $i['date'] ?></td>
 
-                        <td>
-                            <span class="badge bg-success">
-                                <?= htmlspecialchars($i['source']) ?>
-                            </span>
+                        <td class="col-fixed-category">
+                            <div class="table-cell-container">
+                                <?php if (shortenCategory($i['source']) !== htmlspecialchars($i['source'])): ?>
+                                    <span id="inc_cat_short_<?= $i['id'] ?>" class="badge bg-success" style="cursor: pointer;" 
+                                        onclick="document.getElementById('inc_cat_short_<?= $i['id'] ?>').style.display='none'; document.getElementById('inc_cat_full_<?= $i['id'] ?>').style.display='inline-block';" 
+                                        title="Kliknij, aby zobaczyć całość">
+                                        <?= shortenCategory($i['source']) ?>
+                                    </span>
+                                    <span id="inc_cat_full_<?= $i['id'] ?>" class="badge bg-success" style="cursor: pointer; display: none; white-space: normal; word-break: break-word;" 
+                                        onclick="document.getElementById('inc_cat_full_<?= $i['id'] ?>').style.display='none'; document.getElementById('inc_cat_short_<?= $i['id'] ?>').style.display='inline-block';" 
+                                        title="Kliknij, aby schować">
+                                        <?= htmlspecialchars($i['source']) ?>
+                                    </span>
+                                <?php else: ?>
+                                    <span class="badge bg-success"><?= htmlspecialchars($i['source']) ?></span>
+                                <?php endif; ?>
+                            </div>
                         </td>
+
+                        
 
                         <td>
                             <strong class="text-success">
@@ -244,26 +279,58 @@ $incomes = $stmt->fetchAll();
                             </strong>
                         </td>
 
-                        <td><?= htmlspecialchars($i['description']) ?></td>
+                        <td>
+                            <div class="table-cell-container">
+                                <div id="inc_desc_<?= $i['id'] ?>" class="clamp-description"><?= htmlspecialchars($i['description']) ?></div>
+                                <span id="inc_btn_<?= $i['id'] ?>" class="toggle-text-btn" style="display: none;" onclick="toggleText(<?= $i['id'] ?>, 'inc')">... pokaż więcej</span>
+                            </div>
+                        </td>
 
                         <td>
-                            <a href="income.php?edit=<?= $i['id'] ?>"
-                               class="btn btn-warning btn-sm">
-                                Edytuj
-                            </a>
-
-                            <a href="income.php?delete=<?= $i['id'] ?>"
-                               class="btn btn-danger btn-sm"
-                               onclick="return confirm('Usunąć?')">
-                                Usuń
-                            </a>
+                            <a href="income.php?edit=<?= $i['id'] ?>" class="btn btn-warning btn-sm">Edytuj</a>
+                            <a href="income.php?delete=<?= $i['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Usunąć?')">Usuń</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
 
+                <?php if (empty($incomes)): ?>
+                    <tr>
+                        <td colspan="5" class="text-muted text-center">Brak przychodów spełniających kryteria.</td>
+                    </tr>
+                <?php endif; ?>
+
                 </tbody>
 
+
             </table>
+            <script>
+            function toggleText(id, prefix) {
+                var textEl = document.getElementById(prefix + '_desc_' + id);
+                var btnEl = document.getElementById(prefix + '_btn_' + id);
+                
+                if (textEl.classList.contains('text-fully-expanded')) {
+                    textEl.classList.remove('text-fully-expanded');
+                    btnEl.innerText = '... pokaż więcej';
+                } else {
+                    textEl.classList.add('text-fully-expanded');
+                    btnEl.innerText = 'pokaż mniej';
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", function() {
+                // Automatyczne pokazywanie przycisku "... pokaż więcej" tylko dla długich opisów
+                <?php foreach ($incomes as $i): ?>
+                (function() {
+                    var textEl = document.getElementById('inc_desc_<?= $i['id'] ?>');
+                    var btnEl = document.getElementById('inc_btn_<?= $i['id'] ?>');
+                    if (textEl && textEl.scrollHeight > textEl.clientHeight) {
+                        btnEl.style.display = 'inline-block';
+                    }
+                })();
+                <?php endforeach; ?>
+            });
+            </script>
+
 
         </div>
 

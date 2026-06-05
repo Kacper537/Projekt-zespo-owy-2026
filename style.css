@@ -425,3 +425,92 @@ canvas {
     max-height: 300px;
 }
 }
+
+/* =========================
+   STABILNE SKRACANIE TEKSTU W TABELACH
+   ========================= */
+
+/* Kontener blokujący rozszerzanie kolumn tabeli */
+.table-cell-container {
+    display: block;
+    word-break: break-word;
+    hyphens: auto;
+}
+
+/* Kategoria - max 1 linia */
+.clamp-category {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 130px;
+}
+
+/* Opis - max 3 linie */
+.clamp-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 250px;
+}
+
+/* Klasa usuwająca limit linii po kliknięciu "pokaż więcej" */
+.text-fully-expanded {
+    display: block !important;
+    -webkit-line-clamp: unset !important;
+    max-width: none !important;
+}
+
+/* Styl dla linku pokaż więcej / pokaż mniej */
+.toggle-text-btn {
+    color: #2563eb;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    display: inline-block;
+    margin-top: 2px;
+}
+.toggle-text-btn:hover {
+    text-decoration: underline;
+}
+.dark-theme .toggle-text-btn {
+    color: #60a5fa;
+}
+
+/* =========================
+   PROSTE I STABILNE KOLUMNY TABELI
+   ========================= */
+
+/* Wymuszenie stałego układu dla tabel wydatków i przychodów */
+.table-fixed-layout {
+    table-layout: fixed !important;
+    width: 100%;
+}
+
+/* 1. kolumna: Data - sztywna, nie ucieka */
+.table-fixed-layout th:nth-child(1),
+.table-fixed-layout td:nth-child(1) { width: 110px; white-space: nowrap; }
+
+/* 2. kolumna: Kategoria - stała przestrzeń */
+.table-fixed-layout th:nth-child(2),
+.table-fixed-layout td:nth-child(2) { width: 130px; }
+
+/* 3. kolumna: Kwota - stała przestrzeń */
+.table-fixed-layout th:nth-child(3),
+.table-fixed-layout td:nth-child(3) { width: 120px; }
+
+/* 4. kolumna: Opis - szerokość na ok. 35 znaków (ch-character unit) */
+.table-fixed-layout th:nth-child(4),
+.table-fixed-layout td:nth-child(4) { width: 35ch; }
+
+/* Pilnuje, żeby opis po rozwinięciu nie rozpychał tabeli w prawo, tylko rósł w dół */
+.clamp-description {
+    max-width: 100%;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+
+

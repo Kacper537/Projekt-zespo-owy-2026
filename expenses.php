@@ -120,16 +120,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_expense'])) {
 }
 
 /* =========================
+   KATEGORIE
+========================= */
+$categories = ['Jedzenie', 'Transport', 'Rachunki', 'Rozrywka', 'Studia', 'Inne'];
+
+/* =========================
    FILTROWANIE
 ========================= */
 $filter_cat = $_GET['filter_category'] ?? '';
+$filter_month = $_GET['month'] ?? ''; 
 
 $query = "SELECT * FROM expenses WHERE user_id = ?";
 $params = [$user_id];
 
 if (!empty($filter_cat)) {
-    $query .= " AND category = ?";
-    $params[] = $filter_cat;
+    // ZMIANA: Jeżeli wybrano filtr "Inne", pobieramy wszystko, co nie jest zdefiniowaną kategorią główną
+    if ($filter_cat === 'Inne') {
+        // Tworzymy listę głównych kategorii wykluczając "Inne" ze sprawdzania w bazie danych
+        $mainCategories = array_filter($categories, function($c) { return $c !== 'Inne'; });
+        
+        // Generujemy znaczniki znaków zapytania do zapytania SQL, np. (?, ?, ?, ?, ?)
+        $placeholders = implode(',', array_fill(0, count($mainCategories), '?'));
+        
+        $query .= " AND category NOT IN ($placeholders)";
+        foreach ($mainCategories as $cat) {
+            $params[] = $cat;
+        }
+    } else {
+        // Standardowe filtrowanie dla konkretnej kategorii (np. Jedzenie, Transport itp.)
+        $query .= " AND category = ?";
+        $params[] = $filter_cat;
+    }
+}
+
+if (!empty($filter_month)) {
+    $query .= " AND date LIKE ?";
+    $params[] = $filter_month . '%';
 }
 
 $query .= " ORDER BY date DESC, id DESC";
@@ -137,11 +163,6 @@ $query .= " ORDER BY date DESC, id DESC";
 $stmt = $db->prepare($query);
 $stmt->execute($params);
 $expenses = $stmt->fetchAll();
-
-/* =========================
-   KATEGORIE
-========================= */
-$categories = ['Jedzenie', 'Transport', 'Rachunki', 'Rozrywka', 'Studia', 'Inne'];
 ?>
 
 <!DOCTYPE html>
@@ -152,7 +173,6 @@ $categories = ['Jedzenie', 'Transport', 'Rachunki', 'Rozrywka', 'Studia', 'Inne'
 
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -164,7 +184,6 @@ $categories = ['Jedzenie', 'Transport', 'Rachunki', 'Rozrywka', 'Studia', 'Inne'
 
 <div class="row">
 
-    <!-- FORM -->
     <div class="col-md-4 mb-4">
 
         <div class="card p-3 shadow-sm">
@@ -180,6 +199,7 @@ $categories = ['Jedzenie', 'Transport', 'Rachunki', 'Rozrywka', 'Studia', 'Inne'
                     <input type="hidden" name="expense_id" value="<?= $expenseToEdit['id'] ?>">
                 <?php else: ?>
                     <input type="hidden" name="add_expense" value="1">
+                    <input type="hidden" name="expense_id" value="">
                 <?php endif; ?>
 
                 <div class="mb-2">
@@ -252,7 +272,6 @@ $categories = ['Jedzenie', 'Transport', 'Rachunki', 'Rozrywka', 'Studia', 'Inne'
 
     </div>
 
-    <!-- TABLE -->
     <div class="col-md-8">
 
         <div class="card p-3 shadow-sm mb-3">
@@ -266,7 +285,7 @@ $categories = ['Jedzenie', 'Transport', 'Rachunki', 'Rozrywka', 'Studia', 'Inne'
                 <div class="col-auto">
                     <select name="filter_category" class="form-select">
 
-                        <option value="">Wszystkie</option>
+                        <option value="">Wszystkie kategorie</option>
 
                         <?php foreach ($categories as $cat): ?>
                             <option value="<?= $cat ?>" <?= $filter_cat === $cat ? 'selected' : '' ?>>
@@ -278,8 +297,18 @@ $categories = ['Jedzenie', 'Transport', 'Rachunki', 'Rozrywka', 'Studia', 'Inne'
                 </div>
 
                 <div class="col-auto">
+                    <input type="month" name="month" class="form-control" value="<?= htmlspecialchars($filter_month) ?>">
+                </div>
+
+                <div class="col-auto">
                     <button class="btn btn-secondary btn-sm">Filtruj</button>
                 </div>
+
+                <?php if (!empty($filter_cat) || !empty($filter_month)): ?>
+                    <div class="col-auto">
+                        <a href="expenses.php" class="btn btn-outline-danger btn-sm">Wszystkie</a>
+                    </div>
+                <?php endif; ?>
 
             </form>
 
@@ -287,8 +316,7 @@ $categories = ['Jedzenie', 'Transport', 'Rachunki', 'Rozrywka', 'Studia', 'Inne'
 
         <div class="card p-3 shadow-sm">
 
-            <table class="table table-striped">
-
+            <table class="table table-striped table-fixed-layout">
                 <thead>
                 <tr>
                     <th>Data</th>
@@ -298,45 +326,84 @@ $categories = ['Jedzenie', 'Transport', 'Rachunki', 'Rozrywka', 'Studia', 'Inne'
                     <th>Akcja</th>
                 </tr>
                 </thead>
-
                 <tbody>
 
                 <?php foreach ($expenses as $e): ?>
                     <tr>
-
                         <td><?= $e['date'] ?></td>
 
-                        <td>
-                            <span class="badge bg-secondary">
-                                <?= htmlspecialchars($e['category']) ?>
-                            </span>
+                       <td class="col-fixed-category">
+                            <div class="table-cell-container">
+                                <?php if (shortenCategory($e['category']) !== htmlspecialchars($e['category'])): ?>
+                                    <span id="exp_cat_short_<?= $e['id'] ?>" class="badge bg-danger" style="cursor: pointer;" 
+                                        onclick="document.getElementById('exp_cat_short_<?= $e['id'] ?>').style.display='none'; document.getElementById('exp_cat_full_<?= $e['id'] ?>').style.display='inline-block';" 
+                                        title="Kliknij, aby zobaczyć całość">
+                                        <?= shortenCategory($e['category']) ?>
+                                    </span>
+                                    <span id="exp_cat_full_<?= $e['id'] ?>" class="badge bg-danger" style="cursor: pointer; display: none; white-space: normal; word-break: break-word;" 
+                                        onclick="document.getElementById('exp_cat_full_<?= $e['id'] ?>').style.display='none'; document.getElementById('exp_cat_short_<?= $e['id'] ?>').style.display='inline-block';" 
+                                        title="Kliknij, aby schować">
+                                        <?= htmlspecialchars($e['category']) ?>
+                                    </span>
+                                <?php else: ?>
+                                    <span class="badge bg-danger"><?= htmlspecialchars($e['category']) ?></span>
+                                <?php endif; ?>
+                            </div>
                         </td>
 
                         <td>
-                            <strong><?= number_format($e['amount'], 2, ',', ' ') ?> zł</strong>
+                            <strong class="text-danger">
+                                -<?= number_format($e['amount'], 2, ',', ' ') ?> zł
+                            </strong>
                         </td>
-
-                        <td><?= htmlspecialchars($e['description']) ?></td>
 
                         <td>
-
-                            <a href="expenses.php?edit=<?= $e['id'] ?>"
-                               class="btn btn-warning btn-sm">
-                                Edytuj
-                            </a>
-
-                            <a href="expenses.php?delete=<?= $e['id'] ?>"
-                               class="btn btn-danger btn-sm"
-                               onclick="return confirm('Na pewno usunąć?')">
-                                Usuń
-                            </a>
-
+                            <div class="table-cell-container">
+                                <div id="exp_desc_<?= $e['id'] ?>" class="clamp-description"><?= htmlspecialchars($e['description']) ?></div>
+                                <span id="exp_btn_<?= $e['id'] ?>" class="toggle-text-btn" style="display: none;" onclick="toggleText(<?= $e['id'] ?>, 'exp')">... pokaż więcej</span>
+                            </div>
                         </td>
 
+                        <td>
+                            <a href="expenses.php?edit=<?= $e['id'] ?>" class="btn btn-warning btn-sm">Edytuj</a>
+                            <a href="expenses.php?delete=<?= $e['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Usunąć?')">Usuń</a>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
 
+                <?php if (empty($expenses)): ?>
+                    <tr>
+                        <td colspan="5" class="text-muted text-center">Brak wydatków spełniających kryteria.</td>
+                    </tr>
+                <?php endif; ?>
+
                 </tbody>
+                <script>
+                function toggleText(id, prefix) {
+                    var textEl = document.getElementById(prefix + '_desc_' + id);
+                    var btnEl = document.getElementById(prefix + '_btn_' + id);
+                    
+                    if (textEl.classList.contains('text-fully-expanded')) {
+                        textEl.classList.remove('text-fully-expanded');
+                        btnEl.innerText = '... pokaż więcej';
+                    } else {
+                        textEl.classList.add('text-fully-expanded');
+                        btnEl.innerText = 'pokaż mniej';
+                    }
+                }
+
+                document.addEventListener("DOMContentLoaded", function() {
+                    <?php foreach ($expenses as $e): ?>
+                    (function() {
+                        var textEl = document.getElementById('exp_desc_<?= $e['id'] ?>');
+                        var btnEl = document.getElementById('exp_btn_<?= $e['id'] ?>');
+                        if (textEl && textEl.scrollHeight > textEl.clientHeight) {
+                            btnEl.style.display = 'inline-block';
+                        }
+                    })();
+                    <?php endforeach; ?>
+                });
+                </script>
 
             </table>
 
