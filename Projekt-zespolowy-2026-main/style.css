@@ -1,0 +1,532 @@
+/* =========================
+GLOBAL
+========================= */
+
+body {
+background: linear-gradient(135deg, #eef2ff, #f8fafc);
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+color: #1e293b;
+min-height: 100vh;
+}
+
+/* =========================
+NAVBAR
+========================= */
+
+.navbar {
+background: linear-gradient(90deg, #0f172a, #1e293b) !important;
+box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+padding: 12px 0;
+}
+
+.navbar-brand {
+font-size: 1.4rem;
+font-weight: 700;
+letter-spacing: 0.5px;
+}
+
+.nav-link {
+color: rgba(255,255,255,0.85) !important;
+margin-left: 10px;
+transition: 0.3s;
+font-weight: 500;
+}
+
+.nav-link:hover,
+.nav-link.active {
+color: #ffffff !important;
+transform: translateY(-1px);
+}
+
+/* Distinct logout link styling */
+.logout-link {
+    color: #10b981 !important; /* match success/positive color */
+    font-weight: 700;
+    margin-left: 8px;
+}
+.logout-link:hover,
+.logout-link:focus {
+    color: #059669 !important; /* slightly darker on hover */
+    text-decoration: underline;
+}
+.dark-theme .logout-link {
+    color: #10b981 !important; /* keep same color in dark theme */
+}
+
+/* =========================
+CARDS
+========================= */
+
+.card {
+border: none;
+border-radius: 20px;
+box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+transition: 0.3s ease;
+overflow: hidden;
+}
+
+.card:hover {
+transform: translateY(-2px);
+box-shadow: 0 14px 35px rgba(15, 23, 42, 0.12);
+}
+
+.card h4,
+.card h5 {
+font-weight: 700;
+color: #0f172a;
+margin-bottom: 20px;
+}
+
+/* =========================
+SUMMARY CARD
+========================= */
+
+.bg-primary.text-white {
+background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+border-radius: 20px;
+}
+
+.bg-primary.text-white h2 {
+font-size: 2.5rem;
+font-weight: 800;
+margin-top: 10px;
+}
+
+/* =========================
+FORMS
+========================= */
+
+.form-control,
+.form-select {
+border-radius: 12px;
+border: 1px solid #dbeafe;
+padding: 12px;
+transition: 0.3s;
+box-shadow: none !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+border-color: #2563eb;
+box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15) !important;
+}
+
+/* =========================
+BUTTONS
+========================= */
+
+.btn {
+border-radius: 12px;
+font-weight: 600;
+padding: 10px 18px;
+transition: 0.25s;
+border: none;
+}
+
+.btn:hover {
+transform: translateY(-1px);
+}
+
+.btn-primary {
+background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+.btn-primary:hover {
+background: linear-gradient(135deg, #1d4ed8, #1e40af);
+}
+
+.btn-success {
+background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.btn-success:hover {
+background: linear-gradient(135deg, #059669, #047857);
+}
+
+.btn-danger {
+background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.btn-danger:hover {
+background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+.btn-secondary {
+background: linear-gradient(135deg, #64748b, #475569);
+}
+
+/* =========================
+TABLES
+========================= */
+
+.table {
+margin-bottom: 0;
+}
+
+.table thead {
+background: #f1f5f9;
+}
+
+.table thead th {
+border: none;
+color: #334155;
+font-weight: 700;
+padding: 14px;
+}
+
+.table tbody tr {
+transition: 0.2s;
+}
+
+.table tbody tr:hover {
+background: rgba(37, 99, 235, 0.05);
+}
+
+.table td {
+vertical-align: middle;
+padding: 14px;
+}
+
+/* =========================
+BADGES
+========================= */
+
+.badge {
+padding: 8px 12px;
+border-radius: 999px;
+font-size: 0.85rem;
+font-weight: 600;
+}
+
+/* =========================
+PROGRESS BARS
+========================= */
+
+.progress {
+height: 22px !important;
+border-radius: 999px;
+background: #e2e8f0;
+overflow: hidden;
+}
+
+.progress-bar {
+font-weight: 700;
+transition: width 0.6s ease;
+}
+
+/* =========================
+ALERTS
+========================= */
+
+.alert {
+border: none;
+border-radius: 14px;
+padding: 14px 18px;
+font-weight: 500;
+}
+
+/* =========================
+LOGIN PAGE
+========================= */
+
+.container.mt-5 {
+animation: fadeIn 0.7s ease;
+}
+
+h2.text-center {
+font-weight: 800;
+color: #0f172a;
+}
+
+/* =========================
+CHART
+========================= */
+
+canvas#expenseChart {
+max-width: 100%;
+}
+
+/* =========================
+LIST GROUP
+========================= */
+
+.list-group-item {
+border: none;
+border-bottom: 1px solid #e2e8f0;
+padding: 15px 10px;
+transition: 0.2s;
+}
+
+.list-group-item:hover {
+background: #f8fafc;
+}
+
+.list-group-item:last-child {
+border-bottom: none;
+}
+
+/* =========================
+UTILITIES
+========================= */
+
+.text-muted {
+color: #64748b !important;
+}
+
+/* =========================
+   DARK THEME
+   ======================== */
+
+.dark-theme {
+    background: linear-gradient(135deg, #071020, #0b1220) !important;
+    color: #e6eef8;
+}
+
+.dark-theme .navbar {
+    background: linear-gradient(90deg, #07101a, #0b1526) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
+.dark-theme .navbar-brand,
+.dark-theme .nav-link {
+    color: rgba(255,255,255,0.95) !important;
+}
+
+/* Keep logout link green even when other nav links are forced white in dark theme */
+.dark-theme .navbar .nav-link.logout-link {
+    color: #10b981 !important;
+}
+.dark-theme .navbar .nav-link.logout-link:hover,
+.dark-theme .navbar .nav-link.logout-link:focus {
+    color: #059669 !important;
+}
+
+.dark-theme .card {
+    background: #0f1724;
+    color: #e6eef8;
+    box-shadow: 0 12px 30px rgba(2,6,23,0.6);
+}
+
+.dark-theme .card h4,
+.dark-theme .card h5 {
+    color: #ffffff;
+}
+
+.dark-theme .btn-light {
+    background: #111827;
+    color: #e6eef8;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.dark-theme .btn-outline-light {
+    color: #e6eef8;
+    border-color: rgba(255,255,255,0.12);
+}
+
+.dark-theme .text-muted {
+    color: #94a3b8 !important;
+}
+
+/* Ensure theme-toggle button keeps readable colors and hover states */
+#theme-toggle {
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+/* Dark theme: keep outline button subtle and preserve text color on hover */
+.dark-theme #theme-toggle,
+.dark-theme .btn-outline-light#theme-toggle {
+    color: #e6eef8 !important;
+    background-color: transparent !important;
+    border-color: rgba(255,255,255,0.12) !important;
+}
+
+.dark-theme #theme-toggle:hover,
+.dark-theme #theme-toggle:focus,
+.dark-theme .btn-outline-light#theme-toggle:hover {
+    background-color: rgba(255,255,255,0.06) !important;
+    color: #e6eef8 !important;
+}
+
+/* Light theme: ensure button text contrasts on light hero backgrounds */
+#theme-toggle {
+    color: inherit !important;
+}
+
+/* Light-theme specific: make toggle clearly visible on light backgrounds */
+body:not(.dark-theme) #theme-toggle,
+body:not(.dark-theme) .btn-outline-light#theme-toggle {
+    color: #0f172a !important;
+    background-color: rgba(255,255,255,0.9) !important;
+    border-color: rgba(15,23,42,0.08) !important;
+}
+
+body:not(.dark-theme) #theme-toggle:hover,
+body:not(.dark-theme) #theme-toggle:focus {
+    /* keep same appearance on hover in light mode (no visual change) */
+    background-color: rgba(255,255,255,0.9) !important;
+    color: #0f172a !important;
+    border-color: rgba(15,23,42,0.08) !important;
+}
+
+body {
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.card, .navbar, .btn {
+    transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.shadow-sm {
+box-shadow: 0 8px 20px rgba(15,23,42,0.06) !important;
+}
+
+/* =========================
+ANIMATIONS
+========================= */
+
+@keyframes fadeIn {
+from {
+opacity: 0;
+transform: translateY(12px);
+}
+
+to {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+}
+/* =========================
+RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+.navbar-nav {
+    margin-top: 10px;
+}
+
+.card {
+    border-radius: 16px;
+}
+
+.bg-primary.text-white h2 {
+    font-size: 2rem;
+}
+
+.table {
+    font-size: 0.9rem;
+}
+
+.btn {
+    width: 100%;
+}
+
+canvas {
+    max-height: 300px;
+}
+}
+
+/* =========================
+   STABILNE SKRACANIE TEKSTU W TABELACH
+   ========================= */
+
+/* Kontener blokujący rozszerzanie kolumn tabeli */
+.table-cell-container {
+    display: block;
+    word-break: break-word;
+    hyphens: auto;
+}
+
+/* Kategoria - max 1 linia */
+.clamp-category {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 130px;
+}
+
+/* Opis - max 3 linie */
+.clamp-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 250px;
+}
+
+/* Klasa usuwająca limit linii po kliknięciu "pokaż więcej" */
+.text-fully-expanded {
+    display: block !important;
+    -webkit-line-clamp: unset !important;
+    max-width: none !important;
+}
+
+/* Styl dla linku pokaż więcej / pokaż mniej */
+.toggle-text-btn {
+    color: #2563eb;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    display: inline-block;
+    margin-top: 2px;
+}
+.toggle-text-btn:hover {
+    text-decoration: underline;
+}
+.dark-theme .toggle-text-btn {
+    color: #60a5fa;
+}
+
+/* =========================
+   PROSTE I STABILNE KOLUMNY TABELI
+   ========================= */
+
+/* Wymuszenie stałego układu dla tabel wydatków i przychodów */
+.table-fixed-layout {
+    table-layout: fixed !important;
+    width: 100%;
+}
+
+/* 1. kolumna: Data - sztywna, nie ucieka */
+.table-fixed-layout th:nth-child(1),
+.table-fixed-layout td:nth-child(1) { width: 110px; white-space: nowrap; }
+
+/* 2. kolumna: Kategoria - stała przestrzeń */
+.table-fixed-layout th:nth-child(2),
+.table-fixed-layout td:nth-child(2) { width: 130px; }
+
+/* 3. kolumna: Kwota - stała przestrzeń */
+.table-fixed-layout th:nth-child(3),
+.table-fixed-layout td:nth-child(3) { width: 120px; }
+
+/* 4. kolumna: Opis - szerokość na ok. 35 znaków (ch-character unit) */
+.table-fixed-layout th:nth-child(4),
+.table-fixed-layout td:nth-child(4) { width: 10ch; }
+
+/* 5. kolumna: Akcja */
+.table-fixed-layout th:nth-child(5),
+.table-fixed-layout td:nth-child(5) {
+    width: 130px;
+    white-space: nowrap;
+}
+
+/* Pilnuje, żeby opis po rozwinięciu nie rozpychał tabeli w prawo, tylko rósł w dół */
+.clamp-description {
+    max-width: 100%;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.settings-icon {
+    display: inline-block;
+    transition: transform 0.4s ease, filter 0.4s ease;
+    transform-origin: center;
+}
+
+/* hover na całym linku */
+.nav-link:hover .settings-icon {
+    transform: rotate(180deg) scale(1.15);
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.5));
+}
