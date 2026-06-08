@@ -148,7 +148,7 @@ $incomes = $stmt->fetchAll();
 
     <div class="col-md-4 mb-4">
         <div class="card p-3 shadow-sm">
-            <h5><?= $isEditing ? 'Edytuj przychód' : 'Dodaj wydatek' /* Ujednolicony nagłówek lub tekst */ ?></h5>
+            <h5><?= $isEditing ? 'Edytuj przychód' : 'Dodaj przychód' /* Ujednolicony nagłówek lub tekst */ ?></h5>
 
             <form method="POST">
                 <?php if ($isEditing): ?>
