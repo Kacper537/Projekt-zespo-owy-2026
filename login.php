@@ -16,17 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     if (!empty($username) && !empty($password)) {
-        if ($action === 'register') {
-            // Rejestracja
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            try {
-                $stmt = $db->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-                $stmt->execute([$username, $hashedPassword]);
-                $success = "Konto utworzone! Możesz się teraz zalogować.";
-            } catch (PDOException $e) {
-                $error = "Nazwa użytkownika jest już zajęta.";
-            }
-        } elseif ($action === 'login') {
             // Logowanie
             $stmt = $db->prepare("SELECT * FROM users WHERE username = ?");
             $stmt->execute([$username]);
@@ -44,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $error = "Wypełnij wszystkie pola.";
     }
-}
+
 ?>
 <!DOCTYPE html>
 <html lang="pl">
@@ -64,35 +53,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="card p-4 shadow-sm mb-4">
         <h4>Zaloguj się</h4>
-        <form method="POST">
-            <input type="hidden" name="action" value="login">
-            <div class="mb-3">
-                <label class="form-label">Login</label>
-                <input type="text" name="username" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Hasło</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Zaloguj</button>
-        </form>
-    </div>
 
-    <div class="card p-4 shadow-sm" id="register">
-        <h4>Nie masz konta? Zarejestruj się</h4>
-        <form method="POST">
-            <input type="hidden" name="action" value="register">
-            <div class="mb-3">
-                <label class="form-label">Nowy Login</label>
-                <input type="text" name="username" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Nowe Hasło</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-success w-100">Zarejestruj</button>
-        </form>
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label">Login</label>
+            <input type="text" name="username" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Hasło</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">
+            Zaloguj
+        </button>
+    </form>
+
+    <div class="text-center mt-3">
+        Nie masz konta?
+        <a href="register.php">Zarejestruj się</a>
     </div>
+</div>
+
 </div>
 </body>
 </html>

@@ -519,5 +519,14 @@ canvas {
     overflow-wrap: break-word;
 }
 
+.settings-icon {
+    display: inline-block;
+    transition: transform 0.4s ease, filter 0.4s ease;
+    transform-origin: center;
+}
 
-
+/* hover na całym linku */
+.nav-link:hover .settings-icon {
+    transform: rotate(180deg) scale(1.15);
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.5));
+}

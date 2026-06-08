@@ -25,8 +25,13 @@ if (isset($_SESSION['user_id'])) {
                 <h1 class="mb-3">Planer Wydatków</h1>
                 <p class="lead mb-4">Webowy system do kontrolowania finansów użytkownika. Śledź wydatki, planuj budżet i analizuj przychody w jednym miejscu.</p>
                 <div class="d-flex flex-wrap gap-2">
-                    <a href="login.php" class="btn btn-light btn-lg text-primary">Zaloguj się</a>
-                    <a href="login.php#register" class="btn btn-success btn-lg">Zarejestruj się</a>
+                    <a href="login.php" class="btn btn-light btn-lg text-primary">
+                        Zaloguj się
+                    </a>
+
+                    <a href="register.php" class="btn btn-success btn-lg">
+                        Zarejestruj się
+                    </a>
                 </div>
                 <p class="text-white-75 mt-3 mb-0">Po zalogowaniu przejdziesz do swojego spersonalizowanego panelu finansowego.</p>
             </div>
